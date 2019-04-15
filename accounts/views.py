@@ -38,3 +38,8 @@ def logout(request):
     auth_logout(request)
     return redirect('posts:list')
     
+
+    
+
+    
+    

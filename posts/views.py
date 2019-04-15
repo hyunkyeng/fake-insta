@@ -1,17 +1,22 @@
 from django.shortcuts import render, redirect, get_list_or_404, get_object_or_404
 from .forms import PostForm, ImageForm
 from .models import Post, Image
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def list(request):
     posts = get_list_or_404(Post.objects.order_by('-pk'))
     context = {'posts':posts,}
     return render(request, 'posts/list.html', context)
-    
+
+@login_required
 def create(request):
     if request.method == 'POST':
         post_form = PostForm(request.POST)
         if post_form.is_valid():
+            post = post_form.save(commit=False)
+            post.user = request.user
+            post.save()
             post = post_form.save()  # 게시글 내용 처리 끝
             for image in request.FILES.getlist('file'):
                 request.FILES['file'] = image
@@ -33,13 +38,19 @@ def create(request):
     
 def delete(request, post_pk):
     post = get_object_or_404(Post, pk=post_pk)
+    if post.user != request.user:
+        return redirect('posts:list')
     if request.method == 'POST':
         post.delete()
     return redirect('posts:list')
 
-        
+@login_required
 def update(request, post_pk):
     post = get_object_or_404(Post, pk=post_pk)
+    
+    if post.user != request.user:
+        return redirect('posts:list')
+        
     if request.method == 'POST':
         post_form = PostForm(request.POST, instance=post)
         if post_form.is_valid():

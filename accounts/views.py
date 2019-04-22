@@ -35,7 +35,7 @@ def login(request):
     else:
         form = AuthenticationForm()
     context = {'form':form,}
-    return render(request, 'accounts/signup.html', context)
+    return render(request, 'accounts/login.html', context)
     
 def logout(request):
     auth_logout(request)

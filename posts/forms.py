@@ -16,7 +16,7 @@ class ImageForm(forms.ModelForm):
         # }
         
 class CommentForm(forms.ModelForm):
-    content = forms.CharField(label="댓글  ")
+    content = forms.CharField(label="댓글  ",)
     class Meta:
         model = Comment
         fields = ['content',]
